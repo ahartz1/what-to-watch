@@ -6,7 +6,7 @@
 
 * To run this program, save `movie_lib.py` to your computer. Using a command-line program (such as Terminal on Mac&nbsp;OS&nbsp;X), navigate to the folder containing the downloaded file and run the following line to play: `python3 movie_lib.py`
 
-### Movie Recommendations by Popular
+### Movie Recommendations by Popularity
 This mode will show you movie recommendations based on what others have rated. You can optionally provide your userID to filter out the movies that you've already seen.
 
 ### Movie Recommendations by Preference

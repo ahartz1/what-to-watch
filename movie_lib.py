@@ -31,12 +31,12 @@ Find all ratings for a user
 class Movie:
 
     # use just (self, item_id, **kwargs)
-    def __init__(self, item_id, movie_title, **kwargs):
+    def __init__(self, item_id, movie_title=None, **kwargs):
         self.item_id = item_id
         self.movie_title = movie_title
         for key, value in kwargs.items():
             setattr(key, value)
-        self.user_ratings = {} #TODO: write a function to add to this
+        self.user_ratings = {}
 
 
     def __str__(self):
@@ -53,6 +53,10 @@ class Movie:
         for user_rating in self.user_ratings.items():
             ret.append(user_rating['user_id'])
         return ret
+
+
+    def ave_rating(self):
+        return sum(self.ratings())/len(self.ratings())
 
 
     def add_rating(self, user_id, rating):
@@ -106,10 +110,10 @@ def main():
     '''
 
     # Find all ratings for a movie by id
-    ratings = movies[item_id].ratings()
+    movie_ratings = movies[item_id].ratings()
 
     # Find the average rating for a movie by id
-
+    movie_ave_rating = movies[item_id].ave_rating()
 
     # Find the name of a movie by id
 

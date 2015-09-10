@@ -36,7 +36,27 @@ class Movie:
     self.movie_title = movie_title
     for key, value in kwargs.items():
         setattr(key, value)
-    self.user_ratings = {}
+    self.user_ratings = {} #TODO: write a function to add to this
+
+
+    def __str__(self):
+        return 'Movie(item_id: {}, movie_title: {})'.format(self.item_id, self.movie_title)
+
+
+    def __repr__(self):
+        return self.__str__()
+
+
+    def ratings(self):
+        '''Returns list of all ratings for this Movie'''
+        ret = []
+        for user_rating in user_ratings.items():
+            ret.append(user_rating['user_id'])
+        return ret
+
+
+    def add_rating(self, user_id, rating):
+        self.user_ratings[user_id] = rating
 
 
 class User:
@@ -68,11 +88,25 @@ class Rating:
 
 
 def main():
+    data_list = []
+    item_list = []
+    user_list = []
     users = {}
     movies = {}
 
+    ''' 1. Read u.data into master_list, close file; for each entry,
+            a. Check if a movie is in movies
+                - if not in movies, create a new Movie with just the item_id and
+                    add the user_id and rating as an entry in its ratings dictionary
+                - if it is in movies, add the user_id and rating as an entry in its
+                    ratings dictionary
+        2. Read u.item into item_list
+            a. For each movie in movies, populate attributes
+        3. Read u.user into user_list, populate users dictionary
+    '''
+
     # Find all ratings for a movie by id
-    
+    ratings = movies[item_id].ratings()
 
     # Find the average rating for a movie by id
 

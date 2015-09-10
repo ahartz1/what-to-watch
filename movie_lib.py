@@ -32,11 +32,11 @@ class Movie:
 
     # use just (self, item_id, **kwargs)
     def __init__(self, item_id, movie_title, **kwargs):
-    self.item_id = item_id
-    self.movie_title = movie_title
-    for key, value in kwargs.items():
-        setattr(key, value)
-    self.user_ratings = {} #TODO: write a function to add to this
+        self.item_id = item_id
+        self.movie_title = movie_title
+        for key, value in kwargs.items():
+            setattr(key, value)
+        self.user_ratings = {} #TODO: write a function to add to this
 
 
     def __str__(self):
@@ -50,7 +50,7 @@ class Movie:
     def ratings(self):
         '''Returns list of all ratings for this Movie'''
         ret = []
-        for user_rating in user_ratings.items():
+        for user_rating in self.user_ratings.items():
             ret.append(user_rating['user_id'])
         return ret
 
@@ -84,7 +84,7 @@ class Rating:
         self.rating = rating
 
     def movie(self):
-
+        pass
 
 
 def main():
@@ -125,5 +125,5 @@ def main():
 
 
 
-def __name__ == '__main__':
+if __name__ == '__main__':
     main()

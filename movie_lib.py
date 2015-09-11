@@ -138,23 +138,23 @@ def main():
         3. Read u.user into user_list, populate users dictionary
     '''
 
+    # See 1 above
+    with open('u.item', encoding='latin_1') as f:
+        reader = csv.DictReader(f, fieldnames=['movie_id', 'movie_title'], delimiter='|')
+        for row in reader:
+            Movie(row['movie_id'], row['movie_title'])
 
-    with open('~/TIY/ml-100k/u.item', encoding='latin_1') as f:
-         reader = csv.DictReader(f, fieldnames=['movie_id', 'movie_title'] delimiter='|')
-         for row in reader:
-              print(row)
+    # See 2 above
+    with open('u.user', encoding='latin_1') as f:
+        reader = csv.DictReader(f, fieldnames=['movie_id', 'movie_title'] delimiter='|')
+        for row in reader:
+            print(row)
 
-
-    with open('~/TIY/ml-100k/u.user', encoding='latin_1') as f:
-         reader = csv.DictReader(f, fieldnames=['movie_id', 'movie_title'] delimiter='|')
-         for row in reader:
-              print(row)
-
-
-    with open ('~/TIY/ml-100k/u.data') as f:
-         reader = cvs.DictReader(f, delimiter='|')
-         for row in reader:
-              print(row)
+    # # See 3 above
+    # with open ('~/TIY/ml-100k/u.data') as f:
+    #      reader = cvs.DictReader(f, delimiter='|')
+    #      for row in reader:
+    #           print(row)
 
 
 

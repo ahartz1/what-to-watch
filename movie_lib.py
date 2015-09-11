@@ -138,18 +138,23 @@ def main():
         3. Read u.user into user_list, populate users dictionary
     '''
 
-    # Find all stars for a movie by id
-    movie_stars = movies[item_id].get_ratings()
 
-    # Find the average rating for a movie by id
-    movie_ave_rating = movies[item_id].ave_rating()
+    with open('~/TIY/ml-100k/u.item', encoding='latin_1') as f:
+         reader = csv.DictReader(f, fieldnames=['movie_id', 'movie_title'] delimiter='|')
+         for row in reader:
+              print(row)
 
-    # Find the name of a movie by id
-    movie_title = movies[item_id].movie_title
 
-    # Find all stars for a user
-    user_stars = users[user_id].get_ratings()
+    with open('~/TIY/ml-100k/u.user', encoding='latin_1') as f:
+         reader = csv.DictReader(f, fieldnames=['movie_id', 'movie_title'] delimiter='|')
+         for row in reader:
+              print(row)
 
+
+    with open ('~/TIY/ml-100k/u.data') as f:
+         reader = cvs.DictReader(f, delimiter='|')
+         for row in reader:
+              print(row)
 
 
 

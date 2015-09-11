@@ -49,10 +49,7 @@ class Movie:
 
     def ratings(self):
         '''Returns list of all ratings for this Movie'''
-        ret = []
-        for _, u_rating in self.user_ratings.items():
-            ret.append(u_rating)
-        return ret
+        return [u_rating for _, u_rating in self.user_ratings.items()]
 
 
     def ave_rating(self):

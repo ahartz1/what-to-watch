@@ -26,20 +26,30 @@ all_movies = {}
 all_users = {}
 
 
-class Entity:
+class Movie:
 
-    def __init__(self):
-        self.id = id
-        # self.all_movies = []
-        # self.all_users = []
-        self.ratings = {}
+    ratings = {}
 
-
-    def add_rating(self, id, rating):
-        self.ratings[self.id] = ratings
+    # use just (self, item_id, **kwargs)
+    def __init__(self, movie_id, movie_title):
+        self.movie_id = movie_id
+        self.movie_title = movie_title
+        all_movies[self.movie_id] = self
 
 
-    def get_stars(self):
+    def __str__(self):
+        return 'Movie(movie_id: {}, movie_title: {})'.format(self.movie_id, repr(self.movie_title))
+
+
+    def __repr__(self):
+        return self.__str__()
+
+
+    def add_rating(self, user_id, movie_id, stars):
+        self.ratings[rating.user_id] = stars
+
+
+    def get_ratings(self):
         '''Returns list of all stars for this Movie'''
         return [r for _, r in self.ratings.items()]
 
@@ -50,57 +60,57 @@ class Entity:
 
     def get_ratings_with_id(self):
         return self.ratings.values()
-        # return [[i, r] for i, r in self.ratings.items()]
 
 
-class Movie(Entity):
+class User:
 
-    # use just (self, item_id, **kwargs)
-    def __init__(self, movie_id, movie_title, ratings={}, **kwargs):
-        super().__init__(id, ratings)
-        self.movie_title = movie_title
-        # for key, value in kwargs.items():
-        #     setattr(key, value)
-        # self.user_stars = {}
-        all_movies[self.movie_id] = self
+    ratings = {}
 
-
-    def __str__(self):
-        return 'Movie(id: {}, movie_title: {})'.format(self.movie_id, repr(self.movie_title))
-
-
-    def __repr__(self):
-        return self.__str__()
-
-
-class User(Entity):
 
     def __init__(self, user_id):
-        super().__init__(id)
+        self.user_id = user_id
         # if 'age' in kwargs:
         #     self.age = kwargs['age']
         # self.movie_stars = {}
-        all_users[self.id] = self
+        all_users[self.user_id] = self
 
 
     def __str__(self):
-        return 'User(id={})'.format(self.user_id)
+        return 'User(user_id={})'.format(self.user_id)
 
 
     def __repr__(self):
         return self.__str__()
+
+
+    def add_rating(self, user_id, movie_id, stars):
+        self.ratings[rating.movie_id] = stars
+
+
+    def get_ratings(self):
+        '''Returns list of all stars for this Movie'''
+        return [r for _, r in self.ratings.items()]
+
+
+    def ave_rating(self):
+        return sum(self.get_ratings())/len(self.get_ratings())
+
+
+    def get_ratings_with_id(self):
+        return self.ratings.values()
+
 
 
 class Rating:
     def __init__(self, user_id, movie_id, stars):
-        self.user = user_id
-        self.movie = movie_id
+        self.user_id = user_id
+        self.movie_id = movie_id
         self.stars = stars
 
         all_movies[self.movie_id].add_rating(self)
 
     def __str__(self):
-        return 'Rating(user_id={}, movie_id={}, starts={})'.format(self.user_id, self.movie_id, self.stars)
+        return 'Rating(user_id={}, movie_id={}, stars={})'.format(self.user_id, self.movie_id, self.stars)
 
     def __repr__(self):
         return self.__str__()
@@ -125,7 +135,7 @@ def main():
     '''
 
     # Find all stars for a movie by id
-    movie_stars = movies[item_id].get_stars()
+    movie_stars = movies[item_id].get_ratings()
 
     # Find the average rating for a movie by id
     movie_ave_rating = movies[item_id].ave_rating()
@@ -134,7 +144,7 @@ def main():
     movie_title = movies[item_id].movie_title
 
     # Find all stars for a user
-    user_stars = users[user_id].get_stars()
+    user_stars = users[user_id].get_ratings()
 
 
 

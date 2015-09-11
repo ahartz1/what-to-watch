@@ -63,6 +63,10 @@ class Movie:
         self.user_ratings[user_id] = rating
 
 
+    def add_title(self, title):
+        self.movie_title = title
+
+
 class User:
 
     def __init__(self, user_id, **kwargs):

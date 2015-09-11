@@ -19,6 +19,8 @@ movies[6].add_rating(14, 3)
 movies[3].add_rating(14, 4)
 movies[3].add_rating(62, 3)
 movies[3].add_rating(23, 3)
+movies[3].add_title('The Last of the Mohecians')
+
 
 
 def test_retrieve_ratings():
@@ -35,6 +37,10 @@ def test_movie_ave_rating():
     '''Tests the ave_rating method in Movie class'''
     assert movies[3].ave_rating() == 10/3
 
+
+def test_movie_add_title():
+    '''Tests the add_title method in Movie class'''
+    assert movies[3].movie_title == 'The Last of the Mohecians'
 
 
 # m = [3, 4]

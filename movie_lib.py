@@ -1,5 +1,5 @@
 '''
-SUGGESTED CLASSES (one more)
+SUGGESTED CLASSES
 
 Movie
 movie id | movie title | release date | video release date |
@@ -16,16 +16,8 @@ user id | age | gender | occupation | zip code
 
 
 Rating
-Probably a subclass of Movie
-Associates a particular user's rating of that movie
-
-
-FUNCTIONS
-Find all ratings for a movie by id
-Find the average rating for a movie by id
-Find the name of a movie by id
-Find all ratings for a user
-
+A parent class of Movie and User
+Provides a place to collect id, rating pairs.
 '''
 import csv
 

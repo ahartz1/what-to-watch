@@ -27,6 +27,7 @@ Find the name of a movie by id
 Find all ratings for a user
 
 '''
+import csv
 
 
 class Rating:

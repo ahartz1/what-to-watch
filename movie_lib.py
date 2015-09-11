@@ -50,7 +50,6 @@ class Rating:
 
 
     def get_ratings_with_id(self):
-        print([[i, r] for i, r in self.ratings.items()])
         return [[i, r] for i, r in self.ratings.items()]
 
 

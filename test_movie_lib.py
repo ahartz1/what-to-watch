@@ -16,18 +16,26 @@ def is_equal(x, y, tolerance=0.001):
 users = {User(14), User(62), User(23)}
 movies = {6: Movie(6), 72: Movie(72), 3: Movie(3)}
 movies[6].add_rating(14, 3)
+movies[3].add_rating(14, 4)
 movies[3].add_rating(62, 3)
 movies[3].add_rating(23, 3)
 
 
 def test_retrieve_ratings():
-    '''Returns list of all movie ratings for specified movie'''
+    '''Returns list of all movie ratings for specified movie in the Movie class'''
     assert movies[72].ratings() == []
 
 
 def test_movie_add_rating():
-    '''Tests ability to add a rating'''
+    '''Tests ability to add a rating to the Movie class'''
     assert movies[6].ratings() == [3]
+
+
+def test_movie_ave_rating():
+    '''Tests the ave_rating method in Movie class'''
+    assert movies[3].ave_rating() == 10/3
+
+
 
 # m = [3, 4]
 # n = [5, 0]

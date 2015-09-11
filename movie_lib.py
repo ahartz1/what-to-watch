@@ -28,68 +28,65 @@ Find all ratings for a user
 
 '''
 
-class Movie:
+
+class Rating:
+
+    def __init__(self, id, ratings={}):
+        self.id = id
+        self.ratings = {}
+
+
+    def add_rating(self, id, rating):
+        self.ratings[id] = rating
+
+
+    def get_ratings(self):
+        '''Returns list of all ratings for this Movie'''
+        return [r for _, r in self.ratings.items()]
+
+
+    def ave_rating(self):
+        return sum(self.get_ratings())/len(self.get_ratings())
+
+
+class Movie(Rating):
 
     # use just (self, item_id, **kwargs)
-    def __init__(self, item_id, movie_title=None, **kwargs):
-        self.item_id = item_id
+    def __init__(self, id, movie_title=None, ratings={}, **kwargs):
+        super().__init__(id, ratings)
         self.movie_title = movie_title
         # for key, value in kwargs.items():
         #     setattr(key, value)
-        self.user_ratings = {}
+        # self.user_ratings = {}
 
 
     def __str__(self):
-        return 'Movie(item_id: {}, movie_title: {})'.format(self.item_id, self.movie_title)
+        return 'Movie(id: {}, movie_title: {})'.format(self.id, self.movie_title)
 
 
     def __repr__(self):
         return self.__str__()
-
-
-    def ratings(self):
-        '''Returns list of all ratings for this Movie'''
-        return [u_rating for _, u_rating in self.user_ratings.items()]
-
-
-    def ave_rating(self):
-        return sum(self.ratings())/len(self.ratings())
-
-
-    def add_rating(self, user_id, rating):
-        self.user_ratings[user_id] = rating
 
 
     def add_title(self, title):
         self.movie_title = title
 
 
-class User:
+class User(Rating):
 
-    def __init__(self, user_id, **kwargs):
-        self.user_id = user_id
+    def __init__(self, id, ratings={}, **kwargs):
+        super().__init__(id, ratings)
         # if 'age' in kwargs:
         #     self.age = kwargs['age']
-        self.movie_ratings = {}
+        # self.movie_ratings = {}
 
 
     def __str__(self):
-        return 'User(id={})'.format(self.user_id)
+        return 'User(id={})'.format(self.id)
 
 
     def __repr__(self):
         return self.__str__()
-
-
-class Rating:
-
-    def __init__(self, item_id, user_id, rating):
-        self.item_id = item_id
-        self.user_id = user_id
-        self.rating = rating
-
-    def movie(self):
-        pass
 
 
 def main():
@@ -111,7 +108,7 @@ def main():
     '''
 
     # Find all ratings for a movie by id
-    movie_ratings = movies[item_id].ratings()
+    movie_ratings = movies[item_id].get_ratings()
 
     # Find the average rating for a movie by id
     movie_ave_rating = movies[item_id].ave_rating()

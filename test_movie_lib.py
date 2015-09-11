@@ -25,12 +25,12 @@ movies[3].add_title('The Last of the Mohecians')
 
 def test_retrieve_ratings():
     '''Returns list of all movie ratings for specified movie in the Movie class'''
-    assert movies[72].ratings() == []
+    assert movies[72].get_ratings() == []
 
 
 def test_movie_add_rating():
     '''Tests ability to add a rating to the Movie class'''
-    assert movies[6].ratings() == [3]
+    assert movies[6].get_ratings() == [3]
 
 
 def test_movie_ave_rating():

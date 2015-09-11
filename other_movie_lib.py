@@ -46,7 +46,7 @@ class Movie:
 
 
     def add_rating(self, user_id, movie_id, stars):
-        self.ratings[rating.user_id] = stars
+        self.ratings[user_id] = stars
 
 
     def get_ratings(self):
@@ -107,7 +107,7 @@ class Rating:
         self.movie_id = movie_id
         self.stars = stars
 
-        all_movies[self.movie_id].add_rating(self)
+        all_movies[self.movie_id].add_rating(self.user_id, self.movie_id, self.stars)
 
     def __str__(self):
         return 'Rating(user_id={}, movie_id={}, stars={})'.format(self.user_id, self.movie_id, self.stars)

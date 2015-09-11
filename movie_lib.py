@@ -49,6 +49,11 @@ class Rating:
         return sum(self.get_ratings())/len(self.get_ratings())
 
 
+    def get_ratings_with_id(self):
+        print([[i, r] for i, r in self.ratings.items()])
+        return [[i, r] for i, r in self.ratings.items()]
+
+
 class Movie(Rating):
 
     # use just (self, item_id, **kwargs)
@@ -114,10 +119,10 @@ def main():
     movie_ave_rating = movies[item_id].ave_rating()
 
     # Find the name of a movie by id
-
+    movie_title = movies[item_id].movie_title
 
     # Find all ratings for a user
-
+    user_ratings = users[user_id].get_ratings()
 
 
 

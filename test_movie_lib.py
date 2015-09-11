@@ -14,12 +14,20 @@ def is_equal(x, y, tolerance=0.001):
 
 
 users = {User(14), User(62), User(23)}
-movies = {6: Movie(6, 3), 72: Movie(72, 5), 3: Movie(3, 1)}
+movies = {6: Movie(6), 72: Movie(72), 3: Movie(3)}
+movies[6].add_rating(14, 3)
+movies[3].add_rating(62, 3)
+movies[3].add_rating(23, 3)
 
 
 def test_retrieve_ratings():
     '''Returns list of all movie ratings for specified movie'''
-    assert movies[6].ratings() == []
+    assert movies[72].ratings() == []
+
+
+def test_movie_add_rating():
+    '''Tests ability to add a rating'''
+    assert movies[6].ratings() == [3]
 
 # m = [3, 4]
 # n = [5, 0]

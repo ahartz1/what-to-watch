@@ -34,8 +34,8 @@ class Movie:
     def __init__(self, item_id, movie_title=None, **kwargs):
         self.item_id = item_id
         self.movie_title = movie_title
-        for key, value in kwargs.items():
-            setattr(key, value)
+        # for key, value in kwargs.items():
+        #     setattr(key, value)
         self.user_ratings = {}
 
 
@@ -50,8 +50,8 @@ class Movie:
     def ratings(self):
         '''Returns list of all ratings for this Movie'''
         ret = []
-        for user_rating in self.user_ratings.items():
-            ret.append(user_rating['user_id'])
+        for _, u_rating in self.user_ratings.items():
+            ret.append(u_rating)
         return ret
 
 
@@ -67,8 +67,8 @@ class User:
 
     def __init__(self, user_id, **kwargs):
         self.user_id = user_id
-        if 'age' in kwargs:
-            self.age = kwargs['age']
+        # if 'age' in kwargs:
+        #     self.age = kwargs['age']
         self.movie_ratings = {}
 
 

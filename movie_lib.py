@@ -73,7 +73,7 @@ class User:
         for x_m in movie_data_list:
             if x_m[0] in self.get_movie_ids():
                 common_movies.append((x_m[0], self.movie_ratings[x_m[0]]))
-        return common_movies
+        return sorted(common_movies)
 
     def ave_movie_rating(self):
         m_r = self.get_movie_ratings()
@@ -138,7 +138,7 @@ def similar_users(my_user_id):
 
     '''2. Iterate through all_users[u_id].movie_ratings.items() and get the list
           of movies in common with my_user_id.'''
-    user_lists = [all_users[u_id].get_overlaps(my_list) for u_id, _ in all_users.items()]
+    user_lists = [u_id.get_overlaps(my_list) for u_id in all_users.items()]
 
     similar_list = sorted([(u_id, euclidean_distance(my_list, all_users[u_id].get_movie_ids()))
            for u_id, _ in all_users.items()
@@ -170,8 +170,8 @@ def main():
     # There are 141 movies with just 1 user rating.
 
     # print(pop_movies(20, 200))
-    # print('Top 30 most popular movies with over 200 ratings:')
-    # [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(pop_movies(30,200))]
+    print('Top 30 most popular movies with over 200 ratings:')
+    [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(pop_movies(30,200))]
 
     # print('Top 20 most popular movies with over 200 ratings that user 399 has not seen:')
     # # print(pop_movies_for_user(399, 20, 200))
@@ -180,8 +180,8 @@ def main():
     # print('\n List of all movie_ids that user 399 has rated:')
     # print(all_users[399].movie_ratings.items())
 
-    print('\nTop 20 users similar to user 399:')
-    [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(similar_users(399)[:20])]
+    # print('\nTop 20 users similar to user 399:')
+    # [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(similar_users(399)[:20])]
 
 
 if __name__ == '__main__':

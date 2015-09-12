@@ -6,12 +6,13 @@ ebert = User(11)
 
 movie1 = Movie(4, 'Big')
 movie2 = Movie(8, 'The Blob')
+movie3 = Movie(6, "Howard's End")
 
 rating1 = Rating(siskel.id, movie1.id, stars=2)
-rating2 = Rating(ebert.id, movie1.id, stars=4)
+# rating2 = Rating(ebert.id, movie1.id, stars=4)
 rating3 = Rating(siskel.id, movie2.id, stars=1)
 rating4 = Rating(ebert.id, movie2.id, stars=5)
-
+rating5 = Rating(siskel.id, movie3.id, stars=3)
 
 def test_user_creation():
     siskel = User(5)
@@ -48,3 +49,7 @@ def test_get_movie_ratings():
 
 def test_ave_user_rating():
     assert all_movies[movie1.id].ave_user_rating() == 3
+
+
+def test_get_overlaps():
+    assert siskel.get_overlaps(ebert.get_movie_data()) == [(8, 1)]

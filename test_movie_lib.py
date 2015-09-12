@@ -1,32 +1,50 @@
 from movie_lib import *
 
 
-# all_users = []
-# all_movies = []
-
 siskel = User(5)
-ebert = User(12)
-# all_users[siskel.user_id] = siskel
-# all_users[ebert.user_id] = ebert
+ebert = User(11)
 
-movie1 = Movie(3, 'Toy Story')
-movie2 = Movie(movie_id=9, movie_title='Pretty Woman')
-# all_movies[movie1.movie_id] = movie1
-# all_movies[movie2.movie_id] = movie2
+movie1 = Movie(4, 'Big')
+movie2 = Movie(8, 'The Blob')
 
-rating1 = Rating(siskel.user_id, movie1.movie_id, stars=4)
-rating2 = Rating(ebert.user_id, movie1.movie_id, stars=5)
-rating3 = Rating(siskel.user_id, movie2.movie_id, stars=3)
-# all_users[siskel.user_id].add_movie_rating(rating1)
-# all_users[siskel.user_id].add_movie_rating(rating3)
+rating1 = Rating(siskel.id, movie1.id, stars=2)
+rating2 = Rating(ebert.id, movie1.id, stars=4)
+rating3 = Rating(siskel.id, movie2.id, stars=1)
+rating4 = Rating(ebert.id, movie2.id, stars=5)
+
+
+def test_user_creation():
+    siskel = User(5)
+    ebert = User(11)
+    assert siskel.id == 5
+    assert ebert.id == 11
+
+
+def test_movie_creation():
+    movie1 = Movie(4, 'Big')
+    movie2 = Movie(8, 'The Blob')
+    assert movie1.id == 4
+    assert movie1.title == 'Big'
+    assert movie2.id == 8
+    assert movie2.title == 'The Blob'
+
+
+def test_rating_creation():
+    rating1 = Rating(siskel.id, movie1.id, stars=2)
+    rating2 = Rating(ebert.id, movie1.id, stars=4)
+    rating3 = Rating(siskel.id, movie2.id, stars=1)
+    rating4 = Rating(ebert.id, movie2.id, stars=5)
 
 
 def test_get_user_ratings():
     # Return a list of star ratings without user_ids
-    assert len(all_movies[movie1.movie_id].get_user_ratings()) == 2
+    assert sorted(all_movies[movie1.id].get_user_ratings()) == [2, 4]
 
 
 def test_get_movie_ratings():
     # Return a list of star ratings without movie_ids
-    print(all_users[siskel.user_id])
-    assert len(all_users[siskel.user_id].get_movie_ratings()) == 2
+    assert sorted(all_users[siskel.id].get_movie_ratings()) == [1, 2]
+
+
+def test_ave_user_rating():
+    assert all_movies[movie1.id].ave_user_rating() == 3

@@ -91,6 +91,11 @@ class User:
                     o_ratings.append(o_r[1])
         return u_ratings, o_ratings
 
+    def high_to_low(self):
+        return [(i+1, m[1], all_movies[m[0]].title)
+                for i, m in enumerate(
+                sorted(self.get_movie_data(), key=lambda c: c[1], reverse=True))]
+
 
 class Rating:
     def __init__(self, user_id, movie_id, stars):
@@ -167,9 +172,10 @@ def similar_users(my_user_id):
             if m[0] in my_movie_ids:
                 euclid_prep_other.append(m[1])
                 euclid_prep_user.append(all_users[my_user_id].movie_ratings[m[0]])
-        user_similarity_list.append(
-            [u_list[0], euclidean_distance(euclid_prep_user, euclid_prep_other)]
-            )
+        user_similarity_list.append([
+            u_list[0],
+            euclidean_distance(euclid_prep_user, euclid_prep_other)
+            ])
 
     return sorted(user_similarity_list, key=lambda c: c[1], reverse=True)
 
@@ -182,7 +188,8 @@ def euclidean_distance(v, w):
     if len(v) is 0:
         return 0
 
-    # May want to check if len(v) == len(w) and len(v) > 5 to get a more solid
+    if len(v) < 15:
+        return 0
     # pattern of similarity established.
 
     # Note that this is the same as vector subtraction.
@@ -211,9 +218,22 @@ def main():
     # print('\n List of all movie_ids that user 399 has rated:')
     # print(all_users[399].movie_ratings.items())
 
-    print('\nTop 20 users similar to user 399:')
-    [print('{:' '>3}: {}'.format(i+1, m[0])) for i, m in enumerate(similar_users(399)[:20])]
-
+    # print('\nTop 20 users similar to user 399:')
+    # [print('{:' '>3}: {}'.format(i+1, m[0])) for i, m in enumerate(similar_users(399)[:20])]
+    #
+    # print('\nTop 20 users similar to user 120:')
+    # [print('{:' '>3}: {}'.format(i+1, m[0])) for i, m in enumerate(similar_users(120)[:20])]
+    #
+    # print("\nUser 399's favorite movies:")
+    # [print('{:' '>3}: {} stars {}'.format(i+1, m[1], all_movies[m[0]].title))
+    #     for i, m in enumerate(sorted(all_users[399].get_movie_data(),
+    #     key=lambda c: c[1], reverse=True)[:20])]
+    #
+    # print("\nUser 120's favorite movies:")
+    # [print('{:' '>3}: {} stars | {}'.format(*e)) for e in all_users[120].high_to_low()]
+    # [print('{:' '>3}: {} stars {}'.format(i+1, m[1], all_movies[m[0]].title))
+    #     for i, m in enumerate(sorted(all_users[120].get_movie_data(),
+    #     key=lambda c: c[1], reverse=True)[:20])]
 
 if __name__ == '__main__':
     main()

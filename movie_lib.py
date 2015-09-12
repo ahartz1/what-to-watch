@@ -32,6 +32,9 @@ class Movie:
     def get_user_ratings_w_movie_id(self):
         return self.user_ratings.values()
 
+    def num_user_ratings(self):
+        return len(self.get_user_ratings())
+
 
 class User:
     def __init__(self, id):
@@ -99,17 +102,24 @@ def init_structures():
               Rating(int(row['user_id']), int(row['movie_id']), int(row['stars']))
 
 
-def popular_movies(num_results):
-    ret = sorted([(m.title, m.ave_user_rating()) for m_id, m in all_movies.items()], key=lambda c: c[1], reverse=True)[:num_results]
+def pop_movies(num_results, min_ratings=95):
+    ret = sorted([(m.title, m.ave_user_rating()) for m_id, m in all_movies.items() if m.num_user_ratings() > min_ratings], key=lambda c: c[1], reverse=True)[:num_results]
     return [m[0] for m in ret]
+
+
+def pop_movies_for_user(user_id, num_results):
+    pass
+
 
 def main():
     print('Initializing data structures from MovieLens data files . . .')
     init_structures()
     print('Initialization complete.\n')
 
-    print(popular_movies(20))
+    # There are 141 movies with just 1 user rating.
 
+    # print(pop_movies(20, 200))
+    [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(pop_movies(20,200))]
 
 
 

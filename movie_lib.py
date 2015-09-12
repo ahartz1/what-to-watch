@@ -22,10 +22,6 @@ Provides a place to collect id, rating pairs.
 import csv
 
 
-all_movies = {}
-all_users = {}
-
-
 class Movie:
 
     user_ratings = {}
@@ -123,11 +119,11 @@ class Rating:
 
 
 def main():
-    data_list = []
-    item_list = []
-    user_list = []
-    users = {}
-    movies = {}
+
+    global all_movies
+    all_movies = {}
+    global all_users
+    all_users = {}
 
     ''' 1. Read u.data into master_list, close file; for each entry,
             a. Check if a movie is in movies
@@ -158,7 +154,6 @@ def main():
          reader = csv.DictReader(f, fieldnames=['user_id', 'movie_id', 'stars'], delimiter='\t')
          for row in reader:
               Rating(row['user_id'], row['movie_id'], row['stars'])
-              print(row)
 
 
 

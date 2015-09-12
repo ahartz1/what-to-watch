@@ -23,9 +23,7 @@ class Movie:
 
     def get_user_ratings(self):
         '''Returns dictionary of users and their ratings of this Movie'''
-        ret = [r for _, r in self.user_ratings.items()]
-        print(ret)
-        return ret
+        return [r for _, r in self.user_ratings.items()]
 
     def ave_user_rating(self):
         u_r = self.get_user_ratings()
@@ -41,7 +39,6 @@ class User:
         self.movie_ratings = {}
         # if 'age' in kwargs:
         #     self.age = kwargs['age']
-        # self.movie_stars = {}
         all_users[self.id] = self
 
     def __str__(self):
@@ -103,14 +100,15 @@ def init_structures():
 
 
 def popular_movies(num_results):
-    return sorted([all_movies[m_id].ave_user_rating() for m_id, _ in all_movies], reverse=True)[:num_results]
+    return sorted([(m_id, m.ave_user_rating()) for m_id, m in all_movies.items()], key=lambda c: c[1], reverse=True)[:num_results]
 
 
 def main():
-
+    print('Initializing data structures from MovieLens data files . . .')
     init_structures()
+    print('Initialization complete.\n')
 
-    print(popular_movies)
+    print(popular_movies(20))
 
 
 

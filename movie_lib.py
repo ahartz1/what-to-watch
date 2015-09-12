@@ -56,6 +56,10 @@ class User:
     def add_movie_rating(self, rating):
         self.movie_ratings[rating.movie_id] = rating.stars
 
+    def ave_movie_rating(self):
+        m_r = self.get_movie_ratings()
+        return sum(m_r)/len(m_r)
+
     def get_movie_ratings(self):
         '''Returns list of all star ratings user has applied'''
         return [r for _, r in self.movie_ratings.items()]
@@ -75,9 +79,17 @@ class User:
                 common_movies.append((x_m[0], self.movie_ratings[x_m[0]]))
         return sorted(common_movies)
 
-    def ave_movie_rating(self):
-        m_r = self.get_movie_ratings()
-        return sum(m_r)/len(m_r)
+    def comparison_list_maker(self, overlap_list):
+        '''For overlapping movies, outputs a list with two ratings lists: one
+           for self and one for the user_id represented by the overlap_list'''
+        u_ratings = []
+        o_ratings = []
+        for m_id, r in self.movie_ratings.items():
+            for o_r in overlap_list:
+                if m_id == o_r[0]:
+                    u_ratings.append(r)
+                    o_ratings.append(o_r[1])
+        return u_ratings, o_ratings
 
 
 class Rating:
@@ -89,7 +101,8 @@ class Rating:
         all_users[self.user_id].add_movie_rating(self)
 
     def __str__(self):
-        return 'Rating(user_id={}, movie_id={}, stars={})'.format(self.user_id, self.movie_id, self.stars)
+        return 'Rating(user_id={}, movie_id={}, stars={})'.format(
+                self.user_id, self.movie_id, self.stars)
 
     def __repr__(self):
         return self.__str__()
@@ -118,7 +131,10 @@ def init_structures():
 
 
 def pop_movies(num_results, min_ratings=95):
-    ret = sorted([(m.title, m.ave_user_rating()) for m_id, m in all_movies.items() if m.num_user_ratings() > min_ratings], key=lambda c: c[1], reverse=True)[:num_results]
+    ret = sorted([(m.title, m.ave_user_rating())
+                 for m_id, m in all_movies.items()
+                 if m.num_user_ratings() > min_ratings],
+                 key=lambda c: c[1], reverse=True)[:num_results]
     return [m[0] for m in ret]
 
 
@@ -133,17 +149,29 @@ def pop_movies_for_user(user_id, num_results, min_ratings=95):
 def similar_users(my_user_id):
     '''Return list of [user_id, euclidean_distance] sorted by most similar'''
 
-    '''1. Get list of my_user_id's movies and ratings'''
-    my_list = all_users[my_user_id].get_movie_data()
+    my_list = sorted(all_users[my_user_id].get_movie_data())
+    my_movie_ids = all_users[my_user_id].get_movie_ids()
 
-    '''2. Iterate through all_users[u_id].movie_ratings.items() and get the list
-          of movies in common with my_user_id.'''
-    user_lists = [u_id.get_overlaps(my_list) for u_id in all_users.items()]
+    '''Associate each user_id with a list of get_overlaps with my_user_id'''
+    user_lists = [(u_id, u.get_overlaps(my_list))
+                  for u_id, u in all_users.items()
+                  if u_id != my_user_id]
 
-    similar_list = sorted([(u_id, euclidean_distance(my_list, all_users[u_id].get_movie_ids()))
-           for u_id, _ in all_users.items()
-           ], key=lambda c: c[1], reverse=True)
-    return similar_list
+    '''For each item in user_lists, make list of two lists: one for my_user_id
+       and one for the user represented in the user_lists element'''
+    user_similarity_list = [] # Will hold [user_id, euclidean_distance] for each user_id
+    for u_list in user_lists:
+        euclid_prep_user = []
+        euclid_prep_other = []
+        for m in u_list[1]:
+            if m[0] in my_movie_ids:
+                euclid_prep_other.append(m[1])
+                euclid_prep_user.append(all_users[my_user_id].movie_ratings[m[0]])
+        user_similarity_list.append(
+            [u_list[0], euclidean_distance(euclid_prep_user, euclid_prep_other)]
+            )
+
+    return sorted(user_similarity_list, key=lambda c: c[1], reverse=True)
 
 
 def euclidean_distance(v, w):
@@ -153,6 +181,9 @@ def euclidean_distance(v, w):
     # Guard against empty lists.
     if len(v) is 0:
         return 0
+
+    # May want to check if len(v) == len(w) and len(v) > 5 to get a more solid
+    # pattern of similarity established.
 
     # Note that this is the same as vector subtraction.
     differences = [v[idx] - w[idx] for idx in range(len(v))]
@@ -170,8 +201,8 @@ def main():
     # There are 141 movies with just 1 user rating.
 
     # print(pop_movies(20, 200))
-    print('Top 30 most popular movies with over 200 ratings:')
-    [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(pop_movies(30,200))]
+    # print('Top 30 most popular movies with over 200 ratings:')
+    # [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(pop_movies(30,200))]
 
     # print('Top 20 most popular movies with over 200 ratings that user 399 has not seen:')
     # # print(pop_movies_for_user(399, 20, 200))
@@ -180,8 +211,8 @@ def main():
     # print('\n List of all movie_ids that user 399 has rated:')
     # print(all_users[399].movie_ratings.items())
 
-    # print('\nTop 20 users similar to user 399:')
-    # [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(similar_users(399)[:20])]
+    print('\nTop 20 users similar to user 399:')
+    [print('{:' '>3}: {}'.format(i+1, m[0])) for i, m in enumerate(similar_users(399)[:20])]
 
 
 if __name__ == '__main__':

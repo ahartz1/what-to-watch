@@ -103,6 +103,8 @@ class User:
 
 
 class Rating:
+
+
     def __init__(self, user_id, movie_id, stars):
         self.user_id = user_id
         self.movie_id = movie_id
@@ -146,15 +148,18 @@ def main():
 
     # See 2 above
     with open('u.user', encoding='latin_1') as f:
-        reader = csv.DictReader(f, fieldnames=['movie_id', 'movie_title'] delimiter='|')
+        reader = csv.DictReader(f, fieldnames=['user_id'], delimiter='|')
         for row in reader:
-            print(row)
+            User(row['user_id'])
 
-    # # See 3 above
-    # with open ('~/TIY/ml-100k/u.data') as f:
-    #      reader = cvs.DictReader(f, delimiter='|')
-    #      for row in reader:
-    #           print(row)
+
+    # See 3 above
+    with open ('u.data') as f:
+         reader = csv.DictReader(f, fieldnames=['user_id', 'movie_id', 'stars'], delimiter='\t')
+         for row in reader:
+              Rating(row['user_id'], row['movie_id'], row['stars'])
+              print(row)
+
 
 
 

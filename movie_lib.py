@@ -100,7 +100,10 @@ def init_structures():
 
 
 def popular_movies(num_results):
-    return sorted([(m_id, m.ave_user_rating()) for m_id, m in all_movies.items()], key=lambda c: c[1], reverse=True)[:num_results]
+    return sorted([(m.title, m.ave_user_rating()) for m_id, m in all_movies.items()], key=lambda c: c[1], reverse=True)[:num_results]
+
+
+
 
 
 def main():
@@ -108,7 +111,7 @@ def main():
     init_structures()
     print('Initialization complete.\n')
 
-    print(popular_movies(20))
+    print([m[0] for m in popular_movies(20)])
 
 
 

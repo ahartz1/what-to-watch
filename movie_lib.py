@@ -100,18 +100,15 @@ def init_structures():
 
 
 def popular_movies(num_results):
-    return sorted([(m.title, m.ave_user_rating()) for m_id, m in all_movies.items()], key=lambda c: c[1], reverse=True)[:num_results]
-
-
-
-
+    ret = sorted([(m.title, m.ave_user_rating()) for m_id, m in all_movies.items()], key=lambda c: c[1], reverse=True)[:num_results]
+    return [m[0] for m in ret]
 
 def main():
     print('Initializing data structures from MovieLens data files . . .')
     init_structures()
     print('Initialization complete.\n')
 
-    print([m[0] for m in popular_movies(20)])
+    print(popular_movies(20))
 
 
 

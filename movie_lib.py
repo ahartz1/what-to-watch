@@ -261,6 +261,28 @@ def print_popular_for_user(user_id, num_results, num_raters):
                for i, m in enumerate(
                pop_movies_for_user(user_id, num_results, num_raters))]
 
+def print_recs_by_taste(user_id, num_results, width, height, min_overlap=15):
+    rec_results = []
+    max_title = 0
+    print('\nCalculating your results . . .\n')
+    rec_results = recs_by_taste(user_id, min_overlap)
+    print('\nTop {} recommendations for user {}:\n'.format(num_results, user_id))
+
+    # Calculate table width
+    for m in rec_results[:num_results]:
+        if len(m[0]) > max_title:
+            max_title = len(m[0])
+    table_width = 15 + max_title
+    if table_width > width:
+        table_width = width
+    print('Rank | Corr  | Movie Title')
+    print('—'*table_width)
+    [print('{:4d}: ({:.2f}) | {}'.format(i+1, m[1], m[0]))
+           for i, m in enumerate(rec_results[:num_results])]
+    vertical_padding = height - num_results - 2 - 3 - 1
+    if vertical_padding > 0:
+        print('\n'*vertical_padding)
+
 
 def get_user_id():
     while True:
@@ -306,9 +328,10 @@ def main():
         print_popular()
         # print('\n'*2+'To see more results, press Enter.')
     else:
-        print('\nTop 20 recommendations for userID {}:'.format(user_id))
-        [print('{:3d}: {} | sim: {:.2f}'.format(i+1, m[0], m[1]))
-               for i, m in enumerate(recs_by_taste(user_id)[:20])]
+        print_recs_by_taste(user_id, 20, width, height, 8)
+        # print('\nTop 20 recommendations for userID {}:\n'.format(user_id))
+        # [print('{:3d}: sim: {:.2f} | {}'.format(i+1, m[1], m[0]))
+        #        for i, m in enumerate(recs_by_taste(user_id)[:20])]
     # There are 141 movies with just 1 user rating.
 
     # print(pop_movies(20, 200))

@@ -183,7 +183,9 @@ def similar_users(my_user_id, min_overlap=15):
 
 def recs_by_taste(my_user_id):
     # similarity * rating
-    #
+    # normalize
+    #TODO: Collect all of the 4- and 5-star movies from users with euclidean distance
+    # of 0.85 or higher. Make a list
     pass
 
 
@@ -227,6 +229,18 @@ def print_popular_for_user(user_id, num_results, num_raters):
                pop_movies_for_user(user_id, num_results, num_raters))]
 
 
+def get_user_id():
+    while True:
+        user_id = input('> ')
+        if user_id.isdigit():
+            if 1 <= int(user_id) <= 943:
+                return int(user_id)
+        elif user_id == '':
+            return ''
+        else:
+            continue
+
+
 def main():
     width = 80          # default width
     height = 24         # default height
@@ -246,18 +260,18 @@ def main():
 
     print_welcome(width)
 
-    print('To see recommendations based on your preferences, please enter your'
+    print('To see recommendations based on your preferences, please enter your '
           'userID.\nOtherwise, press Enter to browse the most popular movies in '
           'the database.')
 
-    # mode = get_mode()
+    user_id = get_user_id()
 
     #TODO: mode loops
-    if mode == '':
+    if user_id == '':
         print('\n'*2+'Here are the top 20 most popular movies with over 200 '
               'ratings:'+'\n'*2)
         print_popular()
-        print('\n'*2+'To see more results, press Enter.')
+        # print('\n'*2+'To see more results, press Enter.')
 
     # There are 141 movies with just 1 user rating.
 
@@ -265,9 +279,9 @@ def main():
     # print('Top 30 most popular movies with over 200 ratings:')
     # [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(pop_movies(30,200))]
 
-    print('\nTop 20 most popular movies with over 200 ratings that user 399 has not seen:\n')
-    print_popular_for_user(399,20,200)
-    
+    # print('\nTop 20 most popular movies with over 200 ratings that user 399 has not seen:\n')
+    # print_popular_for_user(399,20,200)
+
     # print('\nTop 5 users similar to user 399:')
     # [print('{:' '>3}: {}'.format(i+1, m[0])) for i, m in enumerate(similar_users(399)[:5])]
     # #

@@ -43,10 +43,15 @@ class User:
     def __init__(self, id):
         self.id = int(id)           # This user's id
         self.movie_ratings = {}     # Dict of this user's movie ratings
-        self.similars = []          # [[other_user_id, euclidean_distance, [com_mov, rat], ...], ...]
-        self.recommendations = []   # [[movie1_id], ...]
+        self.similars = []
+        # [[other_user_id, euclidean_distance, [[com_mov, rat], ...]], ...]
+
+        self.min_overlap = None     # Similar overlap used in generating similars
+        self.recommendations = {}   # {movie_id: [rat]}
+
         # if 'age' in kwargs:
         #     self.age = kwargs['age']
+
         all_users[self.id] = self   # Add user to global all_users dictionary
 
     def __str__(self):
@@ -97,6 +102,9 @@ class User:
         return [(i+1, m[1], all_movies[m[0]].title)
                 for i, m in enumerate(
                 sorted(self.get_movie_data(), key=lambda c: c[1], reverse=True))]
+
+    def get_rec_ids(self):
+        return [m[0] for m in self.recommendations]
 
 
 class Rating:
@@ -155,9 +163,10 @@ def pop_movies_for_user(user_id, num_results, min_ratings=95):
 
 def similar_users(my_user_id, min_overlap=15):
     '''Return list of [user_id, euclidean_distance] sorted by most similar'''
+    my_user = all_users[my_user_id]
 
-    my_list = sorted(all_users[my_user_id].get_movie_data())
-    my_movie_ids = all_users[my_user_id].get_movie_ids()
+    my_list = sorted(my_user.get_movie_data())
+    my_movie_ids = my_user.get_movie_ids()
 
     '''Associate each user_id with a list of get_overlaps with my_user_id'''
     user_lists = [(u_id, u.get_overlaps(my_list))
@@ -177,13 +186,14 @@ def similar_users(my_user_id, min_overlap=15):
             for m in u_list[1]:
                 if m[0] in my_movie_ids:
                     euclid_prep_other.append(m[1])
-                    euclid_prep_user.append(all_users[my_user_id].movie_ratings[m[0]])
+                    euclid_prep_user.append(my_user.movie_ratings[m[0]])
             user_similarity_list.append([
                 u_list[0], # corresponds to user_id
                 euclidean_distance(euclid_prep_user, euclid_prep_other),
-                u_list[1], # corresponds to [[common_movie_id_1, rating_1], ... ]
-                min_overlap
+                u_list[1] # corresponds to [[common_movie_id_1, rating_1], ... ]
                 ]) #TODO: Caller store in my_user_id for future use
+    if len(user_similarity_list) > 0:
+        my_user.min_overlap = min_overlap
     return sorted(user_similarity_list, key=lambda c: c[1], reverse=True)
 
 
@@ -191,21 +201,23 @@ def recs_by_taste(my_user_id, min_overlap=15):
     '''Returns list of all movies with euclidean_distance > 0.85, ranked by weighted rating'''
 
     user = all_users[my_user_id]
+    my_viewed_movies = user.get_movie_ids()
 
-    # If no user doesn't have an existing recommendation list, create one.
-    if len(user.recommendations) == 0:
-        user.recommendations = similar_users(my_user_id, min_overlap)
-
+    # If no user doesn't have an existing recommendation list, create one OR
     # If user has existing recommendation list, but of the wrong overlap, replace it.
-    if user.recommendations[3] != min_overlap:
-        user.recommendations = similar_users(my_user_id, min_overlap)
+    if len(user.similars) == 0 or my_user.min_overlap != min_overlap:
+        user.similars = similar_users(my_user_id, min_overlap)
 
-    # similarity * rating
-    # normalize
-    #TODO: Collect all of the 4- and 5-star movies from users with euclidean distance
-    # of 0.85 or higher. Make a list
-    unviewed_pool = []
-    pass
+    for s_user in user.similars: # o_user is for "similar user"
+        for m_id, r in all_users[s_user[0]].movie_ratings.items():
+            if m_id not in my_viewed_movies:
+                if m_id in user.get_rec_ids():
+                    if user.recommendations[m_id] < s_user[1]*r:
+                        user.recommendations[m_id] = s_user[1]*r
+                else:
+                    user.recommendations.append([s_user[0], s_user[1]*r)
+    return [all_movies[m_id].title
+            for m_id, r in sorted(user.recommendations.items(), key=r, reverse=True)]
 
 
 def euclidean_distance(v, w):

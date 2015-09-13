@@ -198,7 +198,7 @@ def similar_users(my_user_id, min_overlap=15):
 
 
 def recs_by_taste(my_user_id, min_overlap=15):
-    '''Returns list of all movies with euclidean_distance > 0.85, ranked by weighted rating'''
+    '''Returns list of all movie titles and their weighted ratings'''
 
     user = all_users[my_user_id]
     my_viewed_movies = user.get_movie_ids()
@@ -279,7 +279,7 @@ def print_recs_by_taste(user_id, num_results, width, height, min_overlap=15):
     print('—'*table_width)
     [print('{:4d}: ({:.2f}) | {}'.format(i+1, m[1], m[0]))
            for i, m in enumerate(rec_results[:num_results])]
-    vertical_padding = height - num_results - 2 - 3 - 1
+    vertical_padding = height - num_results - 8
     if vertical_padding > 0:
         print('\n'*vertical_padding)
 
@@ -342,10 +342,12 @@ def main():
     # print_popular_for_user(399,20,200)
 
     # print('\nTop 20 users similar to user 399:')
-    # [print('{:3d}: {:3d} | sim: {:.2f}'.format(i+1, m[0], m[1])) for i, m in enumerate(similar_users(399)[:20])]
+    # [print('{:3d}: {:3d} | sim: {:.2f}'.format(i+1, m[0], m[1]))
+    #   for i, m in enumerate(similar_users(399)[:20])]
 
     # print('\nTop 20 users similar to user 120:')
-    # [print('{:3d}: {:3d} | sim: {:.2f}'.format(i+1, m[0], m[1])) for i, m in enumerate(similar_users(120)[:20])]
+    # [print('{:3d}: {:3d} | sim: {:.2f}'.format(i+1, m[0], m[1]))
+    #   for i, m in enumerate(similar_users(120)[:20])]
     #
     # print("\nUser 399's favorite movies:")
     # [print('{:' '>3}: {} stars {}'.format(i+1, m[1], all_movies[m[0]].title))

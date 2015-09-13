@@ -9,10 +9,10 @@ all_users = {}
 class Movie:
     # use just (self, item_id, **kwargs)
     def __init__(self, id, title):
-        self.id = int(id)
-        self.title = title
-        all_movies[self.id] = self
-        self.user_ratings = {}
+        self.id = int(id)           # This movie's id
+        self.title = title          # This movie's title
+        all_movies[self.id] = self  # Add this movie to global all_movies dictionary
+        self.user_ratings = {}      # Dictionary of this movie's user ratings
 
     def __str__(self):
         return 'Movie(id: {}, title: {})'.format(self.id, repr(self.title))
@@ -41,11 +41,13 @@ class Movie:
 
 class User:
     def __init__(self, id):
-        self.id = int(id)
-        self.movie_ratings = {}
+        self.id = int(id)           # This user's id
+        self.movie_ratings = {}     # Dict of this user's movie ratings
+        self.similars = []          # [[other_user_id, euclidean_distance, [com_mov, rat], ...], ...]
+        self.recommendations = []   # [[movie1_id], ...]
         # if 'age' in kwargs:
         #     self.age = kwargs['age']
-        all_users[self.id] = self
+        all_users[self.id] = self   # Add user to global all_users dictionary
 
     def __str__(self):
         return 'User(id={})'.format(self.id)
@@ -164,7 +166,7 @@ def similar_users(my_user_id, min_overlap=15):
 
     '''For each item in user_lists, make list of two lists: one for my_user_id
        and one for the user represented in the user_lists element'''
-    user_similarity_list = [] # Will hold [user_id, euclidean_distance, len] for each user_id
+    user_similarity_list = [] # [[user_id, euclidean_distance, [[com_mov, rat], ...]], ...]
     for u_list in user_lists:
         if len(u_list[1]) >= min_overlap:
             euclid_prep_user = []
@@ -174,9 +176,10 @@ def similar_users(my_user_id, min_overlap=15):
                     euclid_prep_other.append(m[1])
                     euclid_prep_user.append(all_users[my_user_id].movie_ratings[m[0]])
             user_similarity_list.append([
-                u_list[0],
-                euclidean_distance(euclid_prep_user, euclid_prep_other)
-                ])
+                u_list[0], # corresponds to user_id
+                euclidean_distance(euclid_prep_user, euclid_prep_other),
+                u_list[1] # corresponds to [[common_movie_id_1, rating_1], ... ]
+                ]) #TODO: Store in my_user_id for future?
 
     return sorted(user_similarity_list, key=lambda c: c[1], reverse=True)
 

@@ -104,7 +104,7 @@ class User:
                 sorted(self.get_movie_data(), key=lambda c: c[1], reverse=True))]
 
     def get_rec_ids(self):
-        return [m[0] for m in self.recommendations]
+        return [m for m, r in self.recommendations.items()]
 
 
 class Rating:
@@ -215,9 +215,10 @@ def recs_by_taste(my_user_id, min_overlap=15):
                     if user.recommendations[m_id] < s_user[1]*r:
                         user.recommendations[m_id] = s_user[1]*r
                 else:
-                    user.recommendations.append([s_user[0], s_user[1]*r)
-    return [all_movies[m_id].title
-            for m_id, r in sorted(user.recommendations.items(), key=r, reverse=True)]
+                    user.recommendations[s_user[0]] = s_user[1]*r
+    ret = [[all_movies[m_id].title, r] # movie title, anticipated user rating
+            for m_id, r in user.recommendations.items()]
+    return [[m[0], m[1]] for m in sorted(ret, key=lambda c: c[1], reverse=True)]
 
 
 def euclidean_distance(v, w):
@@ -305,9 +306,9 @@ def main():
         print_popular()
         # print('\n'*2+'To see more results, press Enter.')
     else:
-        print('\nTop 20 users similar to user {}:'.format(user_id))
-        [print('{:3d}: {:3d} | sim: {:.2f}'.format(i+1, m[0], m[1]))
-               for i, m in enumerate(similar_users(user_id)[:20])]
+        print('\nTop 20 recommendations for userID {}:'.format(user_id))
+        [print('{:3d}: {} | sim: {:.2f}'.format(i+1, m[0], m[1]))
+               for i, m in enumerate(recs_by_taste(user_id)[:20])]
     # There are 141 movies with just 1 user rating.
 
     # print(pop_movies(20, 200))

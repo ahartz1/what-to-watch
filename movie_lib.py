@@ -1,6 +1,6 @@
 import csv
 import math
-
+from os import get_terminal_size
 
 all_movies = {}
 all_users = {}
@@ -151,7 +151,7 @@ def pop_movies_for_user(user_id, num_results, min_ratings=95):
     return [m[0] for m in ret]
 
 
-def similar_users(my_user_id):
+def similar_users(my_user_id, min_overlap=15):
     '''Return list of [user_id, euclidean_distance] sorted by most similar'''
 
     my_list = sorted(all_users[my_user_id].get_movie_data())
@@ -164,20 +164,27 @@ def similar_users(my_user_id):
 
     '''For each item in user_lists, make list of two lists: one for my_user_id
        and one for the user represented in the user_lists element'''
-    user_similarity_list = [] # Will hold [user_id, euclidean_distance] for each user_id
+    user_similarity_list = [] # Will hold [user_id, euclidean_distance, len] for each user_id
     for u_list in user_lists:
-        euclid_prep_user = []
-        euclid_prep_other = []
-        for m in u_list[1]:
-            if m[0] in my_movie_ids:
-                euclid_prep_other.append(m[1])
-                euclid_prep_user.append(all_users[my_user_id].movie_ratings[m[0]])
-        user_similarity_list.append([
-            u_list[0],
-            euclidean_distance(euclid_prep_user, euclid_prep_other)
-            ])
+        if len(u_list[1]) >= min_overlap:
+            euclid_prep_user = []
+            euclid_prep_other = []
+            for m in u_list[1]:
+                if m[0] in my_movie_ids:
+                    euclid_prep_other.append(m[1])
+                    euclid_prep_user.append(all_users[my_user_id].movie_ratings[m[0]])
+            user_similarity_list.append([
+                u_list[0],
+                euclidean_distance(euclid_prep_user, euclid_prep_other)
+                ])
 
     return sorted(user_similarity_list, key=lambda c: c[1], reverse=True)
+
+
+def recs_by_taste(my_user_id):
+    # similarity * rating
+    #
+    pass
 
 
 def euclidean_distance(v, w):
@@ -188,10 +195,6 @@ def euclidean_distance(v, w):
     if len(v) is 0:
         return 0
 
-    if len(v) < 15:
-        return 0
-    # pattern of similarity established.
-
     # Note that this is the same as vector subtraction.
     differences = [v[idx] - w[idx] for idx in range(len(v))]
     squares = [diff ** 2 for diff in differences]
@@ -200,10 +203,61 @@ def euclidean_distance(v, w):
     return 1 / (1 + math.sqrt(sum_of_squares))
 
 
+def print_welcome(width):
+    print('_'*width)
+    vertical_bars = '|'+''.center(width-2)+'|'
+    print((vertical_bars+'\n')*3+vertical_bars)
+    print('|'+'What to Watch'.upper().center(width-2)+'|')
+    print(vertical_bars)
+    print('|'+'Movie Recommendation Engine'.center(width-2)+'|')
+    print((vertical_bars+'\n')*3+vertical_bars)
+    print('|  '+'The MovieLens 100k database working for you!'.ljust(width-4)+'|')
+    print((vertical_bars+'\n')*3+vertical_bars)
+    print('—'*width+'\n'*2)
+
+
+def print_popular(num_results=20, num_raters=200):
+    [print('{:' '>3}: {}'.format(i+1, m))
+     for i, m in enumerate(pop_movies(num_results, num_raters))]
+
+
+def print_popular_for_user(user_id, num_results, num_raters):
+        [print('{:' '>3}: {}'.format(i+1, m))
+               for i, m in enumerate(
+               pop_movies_for_user(user_id, num_results, num_raters))]
+
+
 def main():
-    print('Initializing data structures from MovieLens data files . . .')
+    width = 80          # default width
+    height = 24         # default height
+    terminal_info = {}  # dictionary to receive terminal info from system
+    mode = None         # variable to hold recommendation mode
+    user_id = None      # variable to hold user_id of user
+
+    terminal_info = get_terminal_size()
+    if terminal_info[0] > 0:
+        width = terminal_info[0]
+    if terminal_info[1] > 0:
+        height = terminal_info[1]
+
+    print('Initializing data structures from MovieLens files . . . ', end='')
     init_structures()
-    print('Initialization complete.\n')
+    print('complete.\n')
+
+    print_welcome(width)
+
+    print('To see recommendations based on your preferences, please enter your'
+          'userID.\nOtherwise, press Enter to browse the most popular movies in '
+          'the database.')
+
+    # mode = get_mode()
+
+    #TODO: mode loops
+    if mode == '':
+        print('\n'*2+'Here are the top 20 most popular movies with over 200 '
+              'ratings:'+'\n'*2)
+        print_popular()
+        print('\n'*2+'To see more results, press Enter.')
 
     # There are 141 movies with just 1 user rating.
 
@@ -211,29 +265,23 @@ def main():
     # print('Top 30 most popular movies with over 200 ratings:')
     # [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(pop_movies(30,200))]
 
-    # print('Top 20 most popular movies with over 200 ratings that user 399 has not seen:')
-    # # print(pop_movies_for_user(399, 20, 200))
-    # [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(pop_movies_for_user(399,20,200))]
-    #
-    # print('\n List of all movie_ids that user 399 has rated:')
-    # print(all_users[399].movie_ratings.items())
-
-    # print('\nTop 20 users similar to user 399:')
-    # [print('{:' '>3}: {}'.format(i+1, m[0])) for i, m in enumerate(similar_users(399)[:20])]
-    #
-    # print('\nTop 20 users similar to user 120:')
-    # [print('{:' '>3}: {}'.format(i+1, m[0])) for i, m in enumerate(similar_users(120)[:20])]
-    #
-    # print("\nUser 399's favorite movies:")
-    # [print('{:' '>3}: {} stars {}'.format(i+1, m[1], all_movies[m[0]].title))
-    #     for i, m in enumerate(sorted(all_users[399].get_movie_data(),
-    #     key=lambda c: c[1], reverse=True)[:20])]
-    #
-    # print("\nUser 120's favorite movies:")
+    print('\nTop 20 most popular movies with over 200 ratings that user 399 has not seen:\n')
+    print_popular_for_user(399,20,200)
+    
+    # print('\nTop 5 users similar to user 399:')
+    # [print('{:' '>3}: {}'.format(i+1, m[0])) for i, m in enumerate(similar_users(399)[:5])]
+    # #
+    # # print('\nTop 20 users similar to user 120:')
+    # # [print('{:' '>3}: {}'.format(i+1, m[0])) for i, m in enumerate(similar_users(120)[:20])]
+    # #
+    # # print("\nUser 399's favorite movies:")
+    # # [print('{:' '>3}: {} stars {}'.format(i+1, m[1], all_movies[m[0]].title))
+    # #     for i, m in enumerate(sorted(all_users[399].get_movie_data(),
+    # #     key=lambda c: c[1], reverse=True)[:20])]
+    # #
+    # print("\nUser 120's high-to-low movie ratings:")
     # [print('{:' '>3}: {} stars | {}'.format(*e)) for e in all_users[120].high_to_low()]
-    # [print('{:' '>3}: {} stars {}'.format(i+1, m[1], all_movies[m[0]].title))
-    #     for i, m in enumerate(sorted(all_users[120].get_movie_data(),
-    #     key=lambda c: c[1], reverse=True)[:20])]
+
 
 if __name__ == '__main__':
     main()

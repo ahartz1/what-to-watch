@@ -278,7 +278,7 @@ def print_popular(num_results, min_raters, width, height):
     table_width = get_table_width(pop_results, num_results, width, 12)
 
     if len(pop_results) < num_results:
-        print('\n'*2+'Here are all of the movies with over {} '
+        print('\n'*2+'Here are ALL of the movies with over {} '
               'ratings:'.format(min_raters)+'\n')
     else:
         print('\n'*2+'Here are the top {} most popular movies with over {} '
@@ -301,7 +301,7 @@ def print_popular_for_user(user_id, num_results, min_raters, width, height):
     table_width = get_table_width(u_pop_results, num_results, width, 12)
 
     if len(u_pop_results) < num_results:
-        print('\n'*2+'Here are all of the movies with over {} '
+        print('\n'*2+'Here are ALL of the movies with over {} '
               "ratings that you haven't seen:".format(min_raters)+'\n')
     else:
         print('\n'*2+'Here are the top {} most popular movies with over {} '
@@ -322,7 +322,7 @@ def print_recs_by_taste(user_id, num_results, width, height, min_overlap=15):
     rec_results = recs_by_taste(user_id, min_overlap)
 
     if len(rec_results) < num_results:
-        print('\nUser {}, here are all available recommendations for you:\n'.format(
+        print('\nUser {}, here are ALL available recommendations for you:\n'.format(
               user_id))
     else:
         print('\nUser {}, here are the top {} recommendations for you:\n'.format(

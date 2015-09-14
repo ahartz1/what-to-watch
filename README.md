@@ -10,7 +10,7 @@
 
 ### User-Specific
 * **Recommended.** This mode will show you recommendations specific to your tastes by analyzing what others who have similar preferences have rated highly. The movies that you have already seen are filtered out. There is a menu system that allows you to select the number of results and the minimum number of overlapping movie ratings with other users from which to make the recommendations.
-* **Popular.** This mode will help you find popular movies you haven't seen.
+* **Popular.** This mode will help you explore popular movies you haven't seen.
 
 ### Pure Popular Movies
 This mode lets you explore movies based on user ratings. There is a menu system to allow you to specify the number of results and the minimum number of user ratings.

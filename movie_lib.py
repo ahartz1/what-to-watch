@@ -275,14 +275,20 @@ def print_popular(num_results, min_raters, width, height):
     table_width = 0
     print('\nCalculating your results . . .')
     pop_results = pop_movies(num_results, min_raters)
-    table_width = get_table_width(pop_results, num_results, width, 11)
-    print('\n'*2+'Here are the top {} most popular movies with over {} '
-          'ratings:'.format(num_results, min_raters)+'\n')
-    print('Rank| Ave | Movie Title')
+    table_width = get_table_width(pop_results, num_results, width, 12)
+
+    if len(pop_results) < num_results:
+        print('\n'*2+'Here are all of the movies with over {} '
+              'ratings:'.format(min_raters)+'\n')
+    else:
+        print('\n'*2+'Here are the top {} most popular movies with over {} '
+              'ratings:'.format(num_results, min_raters)+'\n')
+
+    print('Rank | Ave | Movie Title')
     print('—'*table_width)
-    [print('{:3d}: {:.2f} | {}'.format(i+1, m[1], m[0]))
+    [print('{:4d}: {:.2f} | {}'.format(i+1, m[1], m[0]))
            for i, m in enumerate(pop_results[:num_results])]
-    vertical_padding = height - num_results - 8
+    vertical_padding = height - num_results - 9
     if vertical_padding > 0:
         print('\n'*vertical_padding)
 
@@ -292,12 +298,18 @@ def print_popular_for_user(user_id, num_results, min_raters, width, height):
     table_width = 0
     print('\nCalculating your results . . .')
     u_pop_results = pop_movies_for_user(user_id, num_results, min_raters)
-    table_width = get_table_width(u_pop_results, num_results, width, 11)
-    print('\n'*2+'Here are the top {} most popular movies with over {} '
-          "ratings that you haven't seen:".format(num_results, min_raters)+'\n')
-    print('Rank| Ave | Movie Title')
+    table_width = get_table_width(u_pop_results, num_results, width, 12)
+
+    if len(u_pop_results) < num_results:
+        print('\n'*2+'Here are all of the movies with over {} '
+              "ratings that you haven't seen:".format(min_raters)+'\n')
+    else:
+        print('\n'*2+'Here are the top {} most popular movies with over {} '
+              "ratings that you haven't seen:".format(num_results, min_raters)+'\n')
+
+    print('Rank | Ave | Movie Title')
     print('—'*table_width)
-    [print('{:3d}: {:.2f} | {}'.format(i+1, m[1], m[0]))
+    [print('{:4d}: {:.2f} | {}'.format(i+1, m[1], m[0]))
            for i, m in enumerate(u_pop_results[:num_results])]
     vertical_padding = height - num_results - 8
     if vertical_padding > 0:
@@ -308,8 +320,14 @@ def print_recs_by_taste(user_id, num_results, width, height, min_overlap=15):
     table_width = 0
     print('\nCalculating your results . . .\n')
     rec_results = recs_by_taste(user_id, min_overlap)
-    print('\nUser {}, here are the top {} recommendations for you:\n'.format(
-          user_id, num_results))
+
+    if len(rec_results) < num_results:
+        print('\nUser {}, here are all available recommendations for you:\n'.format(
+              user_id))
+    else:
+        print('\nUser {}, here are the top {} recommendations for you:\n'.format(
+              user_id, num_results))
+
     table_width = get_table_width(rec_results, num_results, width, 15)
     print('Rank | Corr  | Movie Title')
     print('—'*table_width)
@@ -332,11 +350,13 @@ def get_mode():
             continue
 
 
-def get_user_id():
+def get_user_id(width):
     while True:
-        user_id = input('userID> ')
+        user_id = input('userID (1–943)> ')
         if user_id.isdigit():
             if 1 <= int(user_id) <= 943:
+                print('WELCOME USER {}'.format(user_id).center(width))
+                print('—'*width)
                 return int(user_id)
         elif user_id == '':
             return ''
@@ -346,7 +366,7 @@ def get_user_id():
 
 def get_user_mode():
     while True:
-        user_mode = input('> ').lower()
+        user_mode = input(' > ').lower()
         if user_mode.isdigit():
             if 1 <= int(user_mode) <= 2:
                 return int(user_mode)
@@ -358,20 +378,93 @@ def get_user_mode():
             continue
 
 
+def get_mode_1_params():
+    while True:
+        num_results = input(' How many results do you want? (press Enter for 20)\n > ')
+        if num_results.isdigit():
+            if 1 <= int(num_results) <= 1682:
+                break
+        elif num_results == '':
+            num_results = 20
+            break
+        else:
+            continue
+
+    while True:
+        min_overlap = input(' Please specify minimum number of overlapping ratings '
+                            '(press Enter for 8)\n > ')
+        if min_overlap.isdigit():
+            if 1 <= int(min_overlap) <= 1541: # 1682 movies, but 141 have only 1 rating
+                break
+        elif min_overlap == '':
+            min_overlap = 8
+            break
+        else:
+            continue
+    return [int(num_results), int(min_overlap)]
+
+
+def get_mode_2_params():
+    while True:
+        num_results = input(' How many results do you want? (press Enter for 20)\n > ')
+        if num_results.isdigit():
+            if 1 <= int(num_results) <= 1682:
+                break
+        elif num_results == '':
+            num_results = 20
+            break
+        else:
+            continue
+
+    while True:
+        min_ratings = input(' Please specify minimum number of ratings per movie '
+                            '(press Enter for 200)\n > ')
+        if min_ratings.isdigit():
+            if 1 <= int(min_ratings) <= 943:
+                break
+        elif min_ratings == '':
+            min_ratings = 200
+            break
+        else:
+            continue
+    return [int(num_results), int(min_ratings)]
+
+
 def user_loop(user_id, width, height):
     while True:
-        print('\nUser Menu: Enter number of selection or [Q] to quit, [M] for main menu\n'
-              ' [1] Movie recommendations based on your taste\n'
-              " [2] Popular movies you haven't seen")
+        print('\n User Menu: Enter selection number, [Q] to quit, or [M] for main menu\n'
+              '  [1] Movie recommendations based on your taste\n'
+              "  [2] Popular movies you haven't seen")
         user_mode = []
         user_mode.append(get_user_mode())
         if user_mode[0] == 1:
-            print_recs_by_taste(user_id, 10, width, height, 8)
+            user_mode.extend(get_mode_1_params())
+            print_recs_by_taste(user_id, user_mode[1], width, height, user_mode[2])
         elif user_mode[0] == 2:
-            print_popular_for_user(user_id, 10, 200, width, height)
+            user_mode.extend(get_mode_2_params())
+            print_popular_for_user(user_id, user_mode[1], user_mode[2], width, height)
         elif user_mode[0] == 'm':
             break
         elif user_mode[0] == 'q':
+            print_goodbye(width)
+            sys.exit()
+
+
+def pop_loop(width, height):
+    while True:
+        print('\n Popular Movie Menu: Enter selection number, [Q] to quit, or [M] for main menu\n'
+              '  [1] Default 20 results, minimum 200 ratings\n'
+              "  [2] Choose number of results and minimum number of ratings")
+        pop_mode = []
+        pop_mode.append(get_user_mode())
+        if pop_mode[0] == 1:
+            print_popular(20, 200, width, height)
+        elif pop_mode[0] == 2:
+            pop_mode.extend(get_mode_2_params())
+            print_popular(pop_mode[1], pop_mode[2], width, height)
+        elif pop_mode[0] == 'm':
+            break
+        elif pop_mode[0] == 'q':
             print_goodbye(width)
             sys.exit()
 
@@ -403,23 +496,15 @@ def main():
         mode = get_mode()
 
         if mode == 1:
-            user_id = get_user_id()
+            user_id = get_user_id(width)
             user_loop(user_id, width, height)
         elif mode == 2:
-            #TODO: make pop_loop()
-            print_popular(10, 200, width, height)
+            pop_loop(width, height)
         elif mode == 'q':
             print_goodbye(width)
             break
 
     # There are 141 movies with just 1 user rating.
-
-    # print(pop_movies(20, 200))
-    # print('Top 30 most popular movies with over 200 ratings:')
-    # [print('{:' '>3}: {}'.format(i+1, m)) for i, m in enumerate(pop_movies(30,200))]
-
-    # print('\nTop 20 most popular movies with over 200 ratings that user 399 has not seen:\n')
-    # print_popular_for_user(399,20,200)
 
     # print('\nTop 20 users similar to user 399:')
     # [print('{:3d}: {:3d} | sim: {:.2f}'.format(i+1, m[0], m[1]))
@@ -428,14 +513,6 @@ def main():
     # print('\nTop 20 users similar to user 120:')
     # [print('{:3d}: {:3d} | sim: {:.2f}'.format(i+1, m[0], m[1]))
     #   for i, m in enumerate(similar_users(120)[:20])]
-    #
-    # print("\nUser 399's favorite movies:")
-    # [print('{:' '>3}: {} stars {}'.format(i+1, m[1], all_movies[m[0]].title))
-    #     for i, m in enumerate(sorted(all_users[399].get_movie_data(),
-    #     key=lambda c: c[1], reverse=True)[:20])]
-    #
-    # print("\nUser 120's high-to-low movie ratings:")
-    # [print('{:' '>3}: {} stars | {}'.format(*e)) for e in all_users[120].high_to_low()]
 
 
 if __name__ == '__main__':

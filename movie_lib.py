@@ -490,8 +490,8 @@ def main():
 
     while True:
         print('\nMain Menu: Enter number of selection or [Q] to quit\n'
-              ' [1] Recommendations by Preference (requires userID)\n'
-              ' [2] Recommendations by Popularity')
+              ' [1] User-Specific (requires userID)\n'
+              ' [2] Pure Popular Movies')
 
         mode = get_mode()
 
